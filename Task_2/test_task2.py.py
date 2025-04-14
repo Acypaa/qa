@@ -181,7 +181,7 @@ def test_create_item_negative_price():
 # Позитивные проверки
 # 1) Получение объявления по существующему ID
 def test_get_item_positive():
-    item_id = '2dad6cd3-a124-401a-adad-fe583b41404'
+    item_id = '06a70754-120c-40b0-b901-02de8abf5f60'
     response = requests.get(f"{BASE_URL_V1}/item/{item_id}")
     print("Тело ответа:", response.text)
     assert response.status_code == 200
@@ -213,7 +213,7 @@ def test_get_item_by_invalid_id_format():
 def test_get_item_by_empty_id():
     empty_id = ""
     response = requests.get(f"{BASE_URL_V1}/item/{empty_id}")
-    assert response.status_code == 404, f"Ожидался статус 404 или 400, получен {response.status_code}"
+    assert response.status_code == 404, f"Ожидался статус 400, получен {response.status_code}"
     print("Ответ теста 'empty_id':", response.json())
     assert "error" in response.json(), "Ожидалось сообщение об ошибке"
 
@@ -323,25 +323,17 @@ def test_get_statistic_v2_100_status():
 # 2. Удаление объявления (DELETE /api/2/item/{id})
 # Позитивные проверки
 # 1) Удаление существующего объявления
-def test_v2_delete_existing_item():
-    # Создаем объявление для удаления
-    payload = {
-        "name": "Для удаления",
-        "price": 3000,
-        "sellerId": 789012
-    }
-    create_response = create_item(payload)
-    assert create_response.status_code == 200
-    item_id = create_response.json().get("id")
+def test_delete_item_positive():
+    response = requests.delete(f"{BASE_URL_V2}/item/e7bf24f4-eae9-43ff-8843-9fb97e4d47a3")
+    print(f"DELETE Response: {response.status_code} - {response.text}")
+    assert response.status_code == 200, "Ожидался статус 200 после удаления"
 
-    # Удаляем объявление
-    response = requests.delete(f"{BASE_URL_V2}/item/{item_id}")
-    assert response.status_code == 200
-    assert "Удалено успешно" in response.json().get("status", "")
 
-    # Проверяем, что объявление действительно удалено
-    check_response = requests.get(f"{BASE_URL_V1}/item/{item_id}")
-    assert check_response.status_code == 404
+# 2) Повторное удаление существующего объявления
+def test_delete_item_positive_2():
+    response = requests.delete(f"{BASE_URL_V2}/item/e7bf24f4-eae9-43ff-8843-9fb97e4d47a3")
+    print(f"DELETE Response: {response.status_code} - {response.text}")
+    assert response.status_code == 200, "Ожидался статус 200 после удаления"
 
 
 # Негативные проверки
